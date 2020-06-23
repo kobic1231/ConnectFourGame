@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"> 
+        <link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css">
+        <link type="text/css" rel="stylesheet" href="style.css">
+        <title> 4 in a Row Game </title>
+    </head>
+
+    <body>
+        <div class="square" id="begin" >
+            <div class="startbar">
+                <div class="title">4 in a Row Game</div>
+                <form id="inputs">
+                <input type="number" class="Row" placeholder="Enter Row number">
+                <input type="number" class="Col" placeholder="Enter Column Number">
+                <input type="number" class="Win" placeholder="Enter Points to Win">
+                </form>
+                <p><button class="str_btn" id="strBtn"><i class="ion-ios-checkmark-outline"></i></button></p>
+                 <p class="err remove" id="er">You are Over The Game Rules!!</p>
+            </div>  
+        </div>
+        <div class="remove" id="play">
+            <div class="winner delete" id="win"> </div>
+            <div class="PlayersPanel">
+                <div class="player-0-panel active">
+                    <div class="player-name" id="name-0">Player 1</div>
+
+                </div>
+
+                <div class="GameTable" id="gt"></div>
+                <div class="player-1-panel">
+                    <div class="player-name" id="name-1">Player 2</div>
+                </div>
+            </div>
+            <div class="newGameBtn" id="new_btn"><button>New Game</button></div>
+        </div>
+        <script src="app.js"></script>
+    </body>
+</html>
