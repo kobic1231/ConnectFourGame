@@ -6,7 +6,6 @@
   (begin = document.getElementById("begin")),
   (play = document.getElementById("play"));
 
-//  document.getElementById("er").classList.add("remove");
 btn.addEventListener("click", getInput);
 btn_new.addEventListener('click', () => location.reload());
 
@@ -16,10 +15,7 @@ function getInput() {
     col: 0,
     ptw: 0,
     victory : true,
-    activePlayer: false,
-    color: ["red", "blue"],
-    x : 0 
-
+    activePlayer: false
   };
 
   gameTbl.row = rowInput.value;
@@ -66,7 +62,7 @@ function generate_table (gameTbl) {
     gt.appendChild(tbl);
 }
 
-function addtr (row , trIndex){
+function addtr(row , trIndex){
     var tr = document.createElement("tr")
     for( let j = 0 ; j < row ; j ++){
         tr.appendChild(addtd(j , trIndex));
@@ -85,19 +81,29 @@ function addtd(tdIndex , trIndex) {
 
 function create_arr(gameTbl) {
   gameTbl.gameArr = [];
-  for (let x = 0; x < gameTbl.col; x++) {
+  for (let x = 0; x < gameTbl.row; x++) {
     gameTbl.gameArr[x] = []; // set up inner array
-    for (let y = 0; y < gameTbl.row; y++) {
+    for (let y = 0; y < gameTbl.col; y++) {
       gameTbl.gameArr[x][y] = 0;    }
   }
   return gameTbl;
 }
+
   function playing(gameTbl) {
     for (let i = 0; i < gameTbl.col; i++) {
       let elementMouseIsOver = document.querySelector("#tr" + i);
       elementMouseIsOver.addEventListener("click", function () { 
         el = elLocation(i, gameTbl.gameArr, gameTbl.row);
         painting(el,i,gameTbl);
+      });
+        elementMouseIsOver.addEventListener("mouseover", function () {
+          el = elLocation(i, gameTbl.gameArr, gameTbl.row);
+          color = setPlayersColor(gameTbl.activePlayer);
+          MouseOverColorChanging(el, i, color, gameTbl.row, gameTbl.victory);
+      });
+      elementMouseIsOver.addEventListener("mouseout", function () {
+          el = elLocation(i, gameTbl.gameArr, gameTbl.row);
+          MouseOverColorChanging(el, i, "rgb(187, 187, 187)", gameTbl.row, gameTbl.victory);
       });
     }
   }
@@ -114,46 +120,55 @@ function nextPlayer(gameTbl) {
   if (gameTbl.victory == true) { 
      document.querySelector('.player-0-panel').classList.toggle('active');
      document.querySelector('.player-1-panel').classList.toggle('active');
-     if (gameTbl.x===0) gameTbl.x++;
-     else gameTbl.x--;
      gameTbl.activePlayer = !gameTbl.activePlayer;
   }
 }
 
 function painting(td, tr,gameTbl){
   if (td < gameTbl.row && gameTbl.victory) {
-    color = gameTbl.color[gameTbl.x];
-    document.getElementById("tr" + tr + "td" + td).style.background = color; //gameTbl.color[gameTbl.x]
-    gameTbl.gameArr[td][tr] = color; 
+    setColor(td, tr,gameTbl);
     checkWin(td, tr, gameTbl);
     nextPlayer(gameTbl);  
-    // endGame(gameTbl);
-
+    endGame(gameTbl);
   }       
+} 
+function setColor(td, tr,gameTbl){
+  color = setPlayersColor(gameTbl.activePlayer);
+  document.getElementById("tr" + tr + "td" + td).style.background = color;
+  gameTbl.gameArr[td][tr] = color; 
+}
+
+function setPlayersColor(activePlayer){
+  if(activePlayer){
+      return "blue" ; 
+  } else {
+      return "red";
+  }
 } 
 
 function checkWin (td,tr,gameTbl){
-  let winPlayer;
+  let Winner;
   let cell, winArr = [];
   gameTbl.cell = cell;
   gameTbl.winArr = winArr;
-  gameTbl.cnt = 0;
+  gameTbl.tableColumnCnt = 0;
   if (gameTbl.activePlayer == true) {
-    winPlayer = 1;
+    Winner = 1;
   } else {
-    winPlayer = 0;
+    Winner = 0;
   }
   if ((td + 1) == gameTbl.row) {
-    gameTbl.cnt++;
+    gameTbl.tableColumnCnt+=1;
+    console.log(gameTbl.tableColumnCnt);
   }
   testingArr = [1, 1, -1, -1, -1, 1, 1, -1, 0, 1, 0, -1, 1, 0, -1, 0];
-  for (let i = 0; i < 16; i = i + 4) {
+  for (let i = 0; i < 16; i+=4) {
     gameTbl.cell = 0
     gameTbl.winArr[gameTbl.cell] = [td, tr];
     gameTbl.cell++;
     check(gameTbl, td, tr, testingArr[i], testingArr[i + 1]);
     check(gameTbl, td, tr, testingArr[i + 2], testingArr[i + 3]);
-    PrintWinner(winArr, winPlayer, gameTbl);
+    PrintWinner(winArr, Winner, gameTbl);
     winArr.length = 0;
   } 
 }
@@ -185,13 +200,37 @@ function check(gameTbl, td, tr, testingArr1, testingArr2) {
 }
 
 
-function PrintWinner(winArr, winPlayer ,gameTbl){
+function PrintWinner(winArr, Winner ,gameTbl){
   if (winArr.length >= gameTbl.ptw) {
     gameTbl.victory = false;
-      document.querySelector('#name-' + winPlayer).textContent = 'winner!';
+      document.querySelector('#name-' + Winner).textContent = 'Winner!';
       for( var j = 0 ; j < winArr.length ; j++){
           document.getElementById("tr" + (winArr[j][1]) + "td" + (winArr[j][0])).style.borderColor = "white";  
       }
   }
   return gameTbl;     
 }
+
+function MouseOverColorChanging(tr, el, color, row,victory) {
+  if(victory && tr < row) {
+  document.getElementById("tr" + el + "td" + tr).style.background = color;
+  }  
+}
+
+function endGame(gameTbl) {
+  if (gameTbl.victory == false) {  // || equality(gameTbl.tableColumnCnt, gameTbl.col
+    if(gameTbl.tableColumnCnt == gameTbl.col)  
+    {
+      document.querySelector('#name-0').textContent = 'equality';
+      document.querySelector('#name-1').textContent = 'equality';
+      document.querySelector('.player-0-panel').classList.add('active');
+      document.querySelector('.player-1-panel').classList.add('active');
+    }
+    gameTbl.victory = false;
+      return gameTbl;
+  } else {
+      gameTbl.victory = true;
+      return gameTbl;   
+  }  
+}
+
