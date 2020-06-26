@@ -151,16 +151,17 @@ function checkWin (td,tr,gameTbl){
   let cell, winArr = [];
   gameTbl.cell = cell;
   gameTbl.winArr = winArr;
-  gameTbl.tableColumnCnt = 0;
+  gameTbl.tableColumnCnt = 0
   if (gameTbl.activePlayer == true) {
     Winner = 1;
   } else {
     Winner = 0;
   }
   if ((td + 1) == gameTbl.row) {
-    gameTbl.tableColumnCnt+=1;
-    console.log(gameTbl.tableColumnCnt);
+    gameTbl.tableColumnCnt++;
+    debugger;
   }
+
   testingArr = [1, 1, -1, -1, -1, 1, 1, -1, 0, 1, 0, -1, 1, 0, -1, 0];
   for (let i = 0; i < 16; i+=4) {
     gameTbl.cell = 0
